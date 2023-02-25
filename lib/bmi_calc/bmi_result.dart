@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../data/provider_data.dart';
 
 class BmiResult extends StatelessWidget {
-  late bool isMale;
-  late double result;
-  late double age;
-  BmiResult({
-    Key? key,
-    required this.age,
-    required this.isMale,
-    required this.result,
-  }) : super(key: key);
+  static const screenRoute = 'bmi_result';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,15 +25,15 @@ class BmiResult extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Gender : ${isMale ? 'Male' : 'Female'}',
+              'Gender : ${Provider.of<MyProvider>(context).isMale ? 'Male' : 'Female'}',
               style: const TextStyle(fontSize: 25),
             ),
             Text(
-              'Result : ${result.round()}',
+              'Result : ${Provider.of<MyProvider>(context).result.round()}',
               style: const TextStyle(fontSize: 25),
             ),
             Text(
-              'Age : ${age.round()}',
+              'Age : ${Provider.of<MyProvider>(context).ageValue.round()}',
               style: const TextStyle(fontSize: 25),
             ),
           ],

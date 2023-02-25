@@ -1,35 +1,19 @@
-// ignore_for_file: avoid_print
-import 'dart:math';
-
+import 'package:bmi_calc/bmi_calc/bmi_result.dart';
+import 'package:bmi_calc/data/colors.dart';
+import 'package:bmi_calc/data/provider_data.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'bmi_result.dart';
-
-class Bmicalc extends StatefulWidget {
-  const Bmicalc({Key? key}) : super(key: key);
-
-  @override
-  State<Bmicalc> createState() => _BmicalcState();
-}
-
-class _BmicalcState extends State<Bmicalc> {
-  Color background = const Color(0xff0a0f1e);
-  Color cardcolor = const Color(0xff101323);
-  Color selectedcolor = const Color(0xff101323);
-  Color buttoncolor = const Color(0xffe6144b);
-  Color hovercolor = const Color.fromARGB(255, 59, 72, 83);
-
-  double hieghtValue = 160;
-  double wieghtValue = 75;
-  double ageValue = 30;
-  bool isMAle = true;
+class Bmicalc extends StatelessWidget {
+  static const screenRoute = 'bmi_calc';
+  MyColors colors = MyColors();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: background,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: background,
+        backgroundColor: colors.background,
         centerTitle: true,
         title: const Text('BMI CALCULATOR'),
       ),
@@ -42,14 +26,14 @@ class _BmicalcState extends State<Bmicalc> {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
-                        isMAle = true;
-                      });
+                      Provider.of<MyProvider>(context,listen: false).onMale();
                     },
                     child: Container(
                       margin: const EdgeInsets.only(right: 15),
                       decoration: BoxDecoration(
-                          color: isMAle ? hovercolor : cardcolor,
+                          color: Provider.of<MyProvider>(context).isMale
+                              ? colors.hovercolor
+                              : colors.cardcolor,
                           borderRadius:
                               const BorderRadius.all(Radius.circular(20))),
                       child: Column(
@@ -75,14 +59,14 @@ class _BmicalcState extends State<Bmicalc> {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
-                        isMAle = false;
-                      });
+                      Provider.of<MyProvider>(context,listen: false).onFemale();
                     },
                     child: Container(
                       margin: const EdgeInsets.only(left: 15),
                       decoration: BoxDecoration(
-                          color: !isMAle ? hovercolor : cardcolor,
+                          color: !Provider.of<MyProvider>(context).isMale
+                              ? colors.hovercolor
+                              : colors.cardcolor,
                           borderRadius:
                               const BorderRadius.all(Radius.circular(20))),
                       child: Column(
@@ -124,7 +108,7 @@ class _BmicalcState extends State<Bmicalc> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '${hieghtValue.round()}',
+                      '${Provider.of<MyProvider>(context).heightValue.round()}',
                       style: const TextStyle(
                           color: Colors.white,
                           fontSize: 30,
@@ -144,15 +128,13 @@ class _BmicalcState extends State<Bmicalc> {
                   ],
                 ),
                 Slider(
-                    value: hieghtValue,
+                    value: Provider.of<MyProvider>(context).heightValue,
                     max: 230,
-                    thumbColor: buttoncolor,
+                    thumbColor: colors.buttoncolor,
                     activeColor: Colors.white70,
                     inactiveColor: Colors.white54,
                     onChanged: (value) {
-                      setState(() {
-                        hieghtValue = value;
-                      });
+                      Provider.of<MyProvider>(context,listen: false).changeHeight(value);
                     })
               ],
             ),
@@ -167,7 +149,7 @@ class _BmicalcState extends State<Bmicalc> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
-                          color: cardcolor,
+                          color: colors.cardcolor,
                           borderRadius: BorderRadius.circular(20)),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -182,7 +164,7 @@ class _BmicalcState extends State<Bmicalc> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 7),
                             child: Text(
-                              '${wieghtValue.round()}',
+                              '${Provider.of<MyProvider>(context).wieghtValue.round()}',
                               style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 28,
@@ -195,12 +177,11 @@ class _BmicalcState extends State<Bmicalc> {
                               SizedBox(
                                 height: 45,
                                 child: FloatingActionButton(
-                                  backgroundColor: hovercolor,
+                                  backgroundColor: colors.hovercolor,
                                   heroTag: 'weight-',
                                   onPressed: () {
-                                    setState(() {
-                                      wieghtValue--;
-                                    });
+                                    Provider.of<MyProvider>(context,listen: false)
+                                        .decrementWeight();
                                   },
                                   child: const Icon(Icons.remove),
                                 ),
@@ -211,12 +192,11 @@ class _BmicalcState extends State<Bmicalc> {
                               SizedBox(
                                 height: 45,
                                 child: FloatingActionButton(
-                                  backgroundColor: hovercolor,
+                                  backgroundColor: colors.hovercolor,
                                   heroTag: 'weight+',
                                   onPressed: () {
-                                    setState(() {
-                                      wieghtValue++;
-                                    });
+                                    Provider.of<MyProvider>(context,listen: false)
+                                        .incrementWeight();
                                   },
                                   child: const Icon(Icons.add),
                                 ),
@@ -232,9 +212,9 @@ class _BmicalcState extends State<Bmicalc> {
                   ),
                   Expanded(
                     child: Container(
-                      padding:const  EdgeInsets.symmetric(vertical: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
-                        color: cardcolor,
+                        color: colors.cardcolor,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Column(
@@ -250,7 +230,7 @@ class _BmicalcState extends State<Bmicalc> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 7),
                             child: Text(
-                              '${ageValue.round()}',
+                              '${Provider.of<MyProvider>(context).ageValue.round()}',
                               style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 28,
@@ -263,12 +243,11 @@ class _BmicalcState extends State<Bmicalc> {
                               SizedBox(
                                 height: 45,
                                 child: FloatingActionButton(
-                                  backgroundColor: hovercolor,
+                                  backgroundColor: colors.hovercolor,
                                   heroTag: 'age-',
                                   onPressed: () {
-                                    setState(() {
-                                      ageValue--;
-                                    });
+                                    Provider.of<MyProvider>(context,listen: false)
+                                        .decrementAge();
                                   },
                                   child: const Icon(Icons.remove),
                                 ),
@@ -279,12 +258,11 @@ class _BmicalcState extends State<Bmicalc> {
                               SizedBox(
                                 height: 45,
                                 child: FloatingActionButton(
-                                  backgroundColor: hovercolor,
+                                  backgroundColor: colors.hovercolor,
                                   heroTag: 'age+',
                                   onPressed: () {
-                                    setState(() {
-                                      ageValue++;
-                                    });
+                                    Provider.of<MyProvider>(context,listen: false)
+                                        .incrementAge();
                                   },
                                   child: const Icon(Icons.add),
                                 ),
@@ -301,7 +279,7 @@ class _BmicalcState extends State<Bmicalc> {
           ),
           Container(
             decoration: BoxDecoration(
-                color: buttoncolor,
+                color: colors.buttoncolor,
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(20),
                 )),
@@ -309,16 +287,8 @@ class _BmicalcState extends State<Bmicalc> {
             width: double.infinity,
             child: MaterialButton(
               onPressed: () {
-                double result = wieghtValue / pow(hieghtValue / 100, 2);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => BmiResult(
-                            age: ageValue,
-                            isMale: isMAle,
-                            result: result,
-                          )),
-                );
+                Provider.of<MyProvider>(context,listen: false).bmiCalc();
+                Navigator.pushNamed(context, BmiResult.screenRoute);
               },
               child: const Text(
                 'calcutor',
